@@ -2,5 +2,18 @@
 'use strict';
 
 module.exports = {
-  name: 'en-codemirror'
+  name: 'en-codemirror',
+  included: function (app) {
+    this._super.included(app)
+
+    app.import('bower_components/codemirror/lib/codemirror.css')
+    app.import('bower_components/codemirror/lib/codemirror.js')
+    app.import('bower_components/codemirror/theme/3024-day.css')
+
+    const modes = ['javascript', 'coffeescript', 'clojure', 'css', 'django', 'haskell', 'htmlmixed', 'python', 'ruby', 'sass', 'sql', 'swift', 'scheme', 'php']
+
+    modes.forEach(function (mode) {
+      app.import(`bower_components/codemirror/mode/${mode}/${mode}.js`)
+    })
+  }
 };
