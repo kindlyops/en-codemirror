@@ -7,18 +7,29 @@ const {
   on,
   run,
   getProperties,
-  Logger
+  Logger,
+  String
 } = Em
 
 const { warn } = Logger
+const { capitalize } = String
 
 export default Ember.Component.extend({
   classNames: ['en-code-mirror'],
-  modes: Em.A(['javascript', 'coffeescript', 'clojure', 'css', 'django', 'haskell', 'htmlmixed', 'python', 'ruby', 'sass', 'sql', 'swift', 'scheme', 'php']),
+  modes: Em.A(['javascript', 'coffeescript', 'clojure', 'css', 'django', 'haskell', 'htmlmixed', 'python', 'ruby', 'sass', 'sql', 'go', 'rust', 'swift', 'scheme', 'php']),
 
   options: computed('modes', function () {
     const modes = get(this, 'modes')
-    const mapped =  modes.map(mode => Em.Object.create({id: mode, label: mode}))
+    const mapped =  modes.map(mode => {
+      let label = capitalize(mode)
+
+      if (mode === "css") label = "CSS"
+      if (mode === "php") label = "PHP"
+      if (mode === "sql") label = "SQL"
+      if (mode === "htmlmixed") label = "HTML"
+
+      return Em.Object.create({id: mode, label: label})
+    })
     return Em.A(mapped)
   }),
   
