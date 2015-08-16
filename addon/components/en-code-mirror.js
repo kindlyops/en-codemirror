@@ -30,6 +30,7 @@ export default Ember.Component.extend({
 
       return Em.Object.create({id: mode, label: label})
     })
+
     return Em.A(mapped)
   }),
   
@@ -39,6 +40,13 @@ export default Ember.Component.extend({
    * @default ''
    */
   value: '',
+
+  /**
+   * @property readOnly
+   * @type {Boolean}
+   * @default false
+   */
+  readOnly: false,
 
   /**
    * @property mode
@@ -57,11 +65,12 @@ export default Ember.Component.extend({
     this._focusOnEditor = this._focusOnEditor.bind(this)
 
     const textarea = document.getElementById("en-code-mirror-textarea")
-    const { value, mode } = getProperties(this, 'value', 'mode')
+    const { value, mode, readOnly } = getProperties(this, 'value', 'mode', 'readOnly')
 
     this._codemirror = CodeMirror(textarea, {
       value: value,
       mode: mode,
+      readOnly: readOnly,
       lineNumbers: true,
       theme: '3024-day',
       autoFocus: true,
