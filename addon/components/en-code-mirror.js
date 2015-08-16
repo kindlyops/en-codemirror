@@ -84,7 +84,7 @@ export default Ember.Component.extend({
     })
 
     this._listenToChanges()
-    this._focusOnEditor()
+    if (autoFocus) this._focusOnEditor()
   }),
 
   /**
