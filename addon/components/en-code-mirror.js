@@ -15,6 +15,12 @@ const { warn } = Logger
 export default Ember.Component.extend({
   classNames: ['en-code-mirror'],
   modes: Em.A(['javascript', 'coffeescript', 'clojure', 'css', 'django', 'haskell', 'htmlmixed', 'python', 'ruby', 'sass', 'sql', 'swift', 'scheme', 'php']),
+
+  options: computed('modes', function () {
+    const modes = get(this, 'modes')
+    const mapped =  modes.map(mode => Em.Object.create({id: mode, label: mode}))
+    return Em.A(mapped)
+  }),
   
   /**
    * @property value
@@ -36,12 +42,13 @@ export default Ember.Component.extend({
    * @method setup
    */
   setup: on('didInsertElement', function () {
-    const elem = this.element
     this._listenToChanges = this._listenToChanges.bind(this)
+    this._focusOnEditor = this._focusOnEditor.bind(this)
 
+    const textarea = document.getElementById("en-code-mirror-textarea")
     const { value, mode } = getProperties(this, 'value', 'mode')
 
-    this._codemirror = CodeMirror(elem, {
+    this._codemirror = CodeMirror(textarea, {
       value: value,
       mode: mode,
       lineNumbers: true,
@@ -50,6 +57,7 @@ export default Ember.Component.extend({
     })
 
     this._listenToChanges()
+    this._focusOnEditor()
   }),
 
   /**
@@ -62,6 +70,29 @@ export default Ember.Component.extend({
     this._codemirror.off('change')
     this._codemirror = null
   }),
+
+  /**
+   * @private
+   * Focuses on the editor
+   *
+   * @method _focusOnEditor
+   */
+
+  _focusOnEditor () {
+    this._codemirror.focus()
+  },
+
+  /**
+   * @private
+   * Changes editor mode
+   *
+   * @method _changeEditorMode
+   */
+
+  _changeEditorMode (mode) {
+    console.log(mode);
+    this._codemirror.setOption("mode", mode)
+  },
 
   /**
    * @private
@@ -90,5 +121,15 @@ export default Ember.Component.extend({
       warn('[en-code-mirror] The mode you specified is not available.')
       return
     }
-  })
+  }),
+
+  actions: {
+    changeMode (mode) {
+      const id = get(mode, 'id')
+
+      set(this, 'mode', id)
+      this._changeEditorMode(id)
+      this._focusOnEditor()
+    }
+  }
 });
