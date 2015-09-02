@@ -13,7 +13,7 @@ module.exports = {
     var modes = ['javascript', 'coffeescript', 'clojure', 'css', 'django', 'clike', 'haskell', 'htmlmixed', 'xml', 'python', 'ruby', 'sass', 'sql', 'go', 'rust', 'swift', 'php']
 
     modes.forEach(function (mode) {
-      app.import(`bower_components/codemirror/mode/${mode}/${mode}.js`)
+      app.import('bower_components/codemirror/mode/' + mode + '/' + mode + '.js')
     })
   }
 };
