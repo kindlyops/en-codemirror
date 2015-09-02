@@ -10,7 +10,7 @@ module.exports = {
     app.import('bower_components/codemirror/lib/codemirror.js')
     app.import('bower_components/codemirror/theme/3024-day.css')
 
-    const modes = ['javascript', 'coffeescript', 'clojure', 'css', 'django', 'clike', 'haskell', 'htmlmixed', 'xml', 'python', 'ruby', 'sass', 'sql', 'go', 'rust', 'swift', 'php']
+    var modes = ['javascript', 'coffeescript', 'clojure', 'css', 'django', 'clike', 'haskell', 'htmlmixed', 'xml', 'python', 'ruby', 'sass', 'sql', 'go', 'rust', 'swift', 'php']
 
     modes.forEach(function (mode) {
       app.import(`bower_components/codemirror/mode/${mode}/${mode}.js`)
