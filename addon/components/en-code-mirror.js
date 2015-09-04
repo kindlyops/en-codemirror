@@ -156,10 +156,12 @@ export default Ember.Component.extend({
 
   didInitAttrs () {
     this._checkModeCompatibility()
+    this._updateEditorValue()
   },
 
   didReceiveAttrs () {
     this._checkModeCompatibility()
+    this._updateEditorValue()
   },
 
   actions: {
