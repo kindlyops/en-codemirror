@@ -117,7 +117,6 @@ export default Ember.Component.extend({
    */
 
   _changeEditorMode (mode) {
-    console.log(mode);
     this._codemirror.setOption("mode", mode)
   },
 
@@ -140,7 +139,7 @@ export default Ember.Component.extend({
     })
   },
 
-  _checkModeCompatibility: on('didInitAttrs', 'didReceiveAttrs', function () {
+  _checkModeCompatibility () {
     const mode = get(this, 'mode')
     const modes = get(this, 'modes')
 
@@ -149,6 +148,19 @@ export default Ember.Component.extend({
       return
     }
   }),
+
+  _updateEditorValue () {
+    const value = this.getAttr('value')
+    this._codemirror.setOption("value", value)
+  },
+
+  didInitAttrs () {
+    this._checkModeCompatibility()
+  },
+
+  didReceiveAttrs () {
+    this._checkModeCompatibility()
+  },
 
   actions: {
     changeMode (mode) {
