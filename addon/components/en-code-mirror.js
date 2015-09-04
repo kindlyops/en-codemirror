@@ -117,7 +117,10 @@ export default Ember.Component.extend({
    */
 
   _changeEditorMode (mode) {
-    this._codemirror.setOption("mode", mode)
+    const codemirror = this._codemirror
+    if (!codemirror) return
+
+    codemirror.setOption("mode", mode)
   },
 
   /**
@@ -147,11 +150,16 @@ export default Ember.Component.extend({
       warn('[en-code-mirror] The mode you specified is not available.')
       return
     }
-  }),
+  },
 
   _updateEditorValue () {
     const value = this.getAttr('value')
-    this._codemirror.setOption("value", value)
+    const codemirror = this._codemirror
+
+    if (!codemirror) return
+    let cursor = codemirror.getCursor()
+    codemirror.setOption("value", value)
+    codemirror.setCursor(cursor)
   },
 
   didInitAttrs () {
