@@ -7,8 +7,10 @@ const {
   on,
   run,
   getProperties,
+  getWithDefault,
   Logger,
-  String
+  String,
+  isEmpty
 } = Em
 
 const { warn } = Logger
@@ -72,10 +74,9 @@ export default Ember.Component.extend({
     this._focusOnEditor = this._focusOnEditor.bind(this)
 
     const textarea = document.getElementById("en-code-mirror-textarea")
-    const { value, mode, readOnly, autoFocus } = getProperties(this, 'value', 'mode', 'readOnly', 'autoFocus')
+    const {  mode, readOnly, autoFocus } = getProperties(this, 'mode', 'readOnly', 'autoFocus')
 
     this._codemirror = CodeMirror(textarea, {
-      value: value,
       mode: mode,
       readOnly: readOnly,
       autoFocus: autoFocus,
@@ -84,6 +85,7 @@ export default Ember.Component.extend({
     })
 
     this._listenToChanges()
+    this._updateEditorValue()
     if (autoFocus) this._focusOnEditor()
   }),
 
@@ -153,10 +155,12 @@ export default Ember.Component.extend({
   },
 
   _updateEditorValue () {
-    const value = this.getAttr('value')
     const codemirror = this._codemirror
-
     if (!codemirror) return
+
+    let value = this.getAttr('value')
+    if (isEmpty(value)) value = ''
+
     let cursor = codemirror.getCursor()
     codemirror.setOption("value", value)
     codemirror.setCursor(cursor)
