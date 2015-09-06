@@ -73,7 +73,7 @@ export default Ember.Component.extend({
     this._listenToChanges = this._listenToChanges.bind(this)
     this._focusOnEditor = this._focusOnEditor.bind(this)
 
-    const textarea = document.getElementById("en-code-mirror-textarea")
+    const textarea = this.$(".en-code-mirror-textarea")[0]
     const {  mode, readOnly, autoFocus } = getProperties(this, 'mode', 'readOnly', 'autoFocus')
 
     this._codemirror = CodeMirror(textarea, {
@@ -81,7 +81,7 @@ export default Ember.Component.extend({
       readOnly: readOnly,
       autoFocus: autoFocus,
       lineNumbers: true,
-      theme: '3024-day'
+      theme: 'default'
     })
 
     this._listenToChanges()
