@@ -80,8 +80,7 @@ export default Ember.Component.extend({
       mode: mode,
       readOnly: readOnly,
       autoFocus: autoFocus,
-      lineNumbers: true,
-      theme: 'base16-light'
+      lineNumbers: true
     })
 
     this._listenToChanges()
