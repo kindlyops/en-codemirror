@@ -70,22 +70,27 @@ export default Ember.Component.extend({
    * @method setup
    */
   setup: on('didInsertElement', function () {
-    this._listenToChanges = this._listenToChanges.bind(this)
-    this._focusOnEditor = this._focusOnEditor.bind(this)
+    run.scheduleOnce('afterRender', () => {
+      this._listenToChanges = this._listenToChanges.bind(this)
+      this._focusOnEditor = this._focusOnEditor.bind(this)
 
-    const textarea = this.$(".en-code-mirror-textarea")[0]
-    const {  mode, readOnly, autoFocus } = getProperties(this, 'mode', 'readOnly', 'autoFocus')
+      const textarea = this.$(".en-code-mirror-textarea")[0]
+      const {  mode, readOnly, autoFocus } = getProperties(
+        this, 'mode', 'readOnly', 'autoFocus'
+      )
 
-    this._codemirror = CodeMirror(textarea, {
-      mode: mode,
-      readOnly: readOnly,
-      autoFocus: autoFocus,
-      lineNumbers: true
+      this._codemirror = CodeMirror(textarea, {
+        mode: mode,
+        readOnly: readOnly,
+        autoFocus: autoFocus,
+        lineNumbers: true
+      })
+
+      this._listenToChanges()
+      this._updateEditorValue()
+
+      if (autoFocus) this._focusOnEditor()
     })
-
-    this._listenToChanges()
-    this._updateEditorValue()
-    if (autoFocus) this._focusOnEditor()
   }),
 
   /**
@@ -166,6 +171,7 @@ export default Ember.Component.extend({
   },
 
   init () {
+    this._super(...arguments)
     this._checkModeCompatibility()
     this._updateEditorValue()
   },
