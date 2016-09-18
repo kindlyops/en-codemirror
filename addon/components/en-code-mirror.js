@@ -147,7 +147,7 @@ export default Ember.Component.extend({
     const mode = get(this, 'mode')
     const modes = get(this, 'modes')
 
-    if (!modes.contains(mode)) {
+    if (!modes.includes(mode)) {
       warn('[en-code-mirror] The mode you specified is not available.')
       return
     }
@@ -165,7 +165,7 @@ export default Ember.Component.extend({
     codemirror.setCursor(cursor)
   },
 
-  didInitAttrs () {
+  init () {
     this._checkModeCompatibility()
     this._updateEditorValue()
   },
