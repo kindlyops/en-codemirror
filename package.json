@@ -1,7 +1,7 @@
 {
   "name": "en-codemirror",
   "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "en-codemirror is a codemirror component for ember.js",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -38,11 +38,15 @@
     "ember-try": "0.0.6"
   },
   "keywords": [
-    "ember-addon"
+    "ember-addon",
+    "ember codemirror",
+    "ember.js codemirror",
+    "ember.js code",
+    "ember code highlight"
   ],
   "dependencies": {
     "ember-cli-babel": "^5.0.0",
-    "en-select": "git+https://github.com/swastik/en-select.git"
+    "en-select": "0.5.8"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"
