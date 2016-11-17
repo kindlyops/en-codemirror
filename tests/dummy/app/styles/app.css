@@ -1,0 +1,7 @@
+.en-select {
+  font-size: 13px;
+  max-width: 220px;
+  position: absolute;
+  right: 100%;
+  top: 0
+}
