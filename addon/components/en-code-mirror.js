@@ -87,7 +87,7 @@ export default Component.extend({
         lineNumbers: true
       })
 
-      this._changeEditorMode(mode)
+      this._changeEditorMode(mode, mode) // Javascript
 
       this._listenToChanges()
       this._updateEditorValue()
@@ -127,7 +127,7 @@ export default Component.extend({
 
   _changeEditorMode (id, mode) {
     const codemirror = this._codemirror
-    if (!codemirror) return
+    if (!codemirror || !mode) return
 
     CodeMirror.autoLoadMode(codemirror, mode)
     codemirror.setOption("mode", id)
