@@ -18,7 +18,18 @@ const { capitalize } = String
 
 export default Ember.Component.extend({
   classNames: ['en-code-mirror'],
-  modes: Em.A(['javascript', 'coffeescript', 'clojure', 'css', 'django', 'haskell', 'htmlmixed', 'python', 'ruby', 'sass', 'sql', 'go', 'rust', 'swift', 'scheme', 'php']),
+
+  modes: Em.A([
+    'javascript',
+    'java',
+    'css',
+    'htmlmixed',
+    'python',
+    'ruby',
+    'go',
+    'php'
+  ]),
+
 
   options: computed('modes', function () {
     const modes = get(this, 'modes')
