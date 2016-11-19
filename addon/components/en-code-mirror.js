@@ -1,8 +1,9 @@
 import Ember from 'ember';
 
 const {
-  get: get,
-  set: set,
+  get,
+  set,
+  inject,
   computed,
   on,
   run,
@@ -10,15 +11,34 @@ const {
   getWithDefault,
   Logger,
   String,
-  isEmpty
+  isEmpty,
+  Component
 } = Em
 
 const { warn } = Logger
 const { capitalize } = String
 
-export default Ember.Component.extend({
+export default Component.extend({
   classNames: ['en-code-mirror'],
-  modes: Em.A(['javascript', 'coffeescript', 'clojure', 'css', 'django', 'haskell', 'htmlmixed', 'python', 'ruby', 'sass', 'sql', 'go', 'rust', 'swift', 'scheme', 'php']),
+  loader: inject.service('code-mirror-loader'),
+
+  modes: Em.A(['javascript',
+    'clojure',
+    'css',
+    'django',
+    'haskell',
+    'htmlmixed',
+    'python',
+    'ruby',
+    'sass',
+    'sql',
+    'go',
+    'rust',
+    'swift',
+    'scheme',
+    'php'
+  ]),
+
 
   options: computed('modes', function () {
     const modes = get(this, 'modes')
@@ -79,17 +99,26 @@ export default Ember.Component.extend({
         this, 'mode', 'readOnly', 'autoFocus'
       )
 
-      this._codemirror = CodeMirror(textarea, {
-        mode: mode,
-        readOnly: readOnly,
-        autoFocus: autoFocus,
-        lineNumbers: true
-      })
+      let loader = get(this, 'loader')
 
-      this._listenToChanges()
-      this._updateEditorValue()
+      Promise
+        .all([loader.loadJavascript(), loader.loadCSS()])
+        .then(_ => {
+          this._codemirror = CodeMirror(textarea, {
+            mode: mode,
+            readOnly: readOnly,
+            autoFocus: autoFocus,
+            lineNumbers: true
+          })
 
-      if (autoFocus) this._focusOnEditor()
+          this._listenToChanges()
+          this._updateEditorValue()
+
+          if (autoFocus) this._focusOnEditor()
+
+        }).catch(err => {
+          console.error(err)
+        })
     })
   }),
 
@@ -152,7 +181,7 @@ export default Ember.Component.extend({
     const mode = get(this, 'mode')
     const modes = get(this, 'modes')
 
-    if (!modes.includes(mode)) {
+    if (modes.indexOf(mode) === -1) {
       warn('[en-code-mirror] The mode you specified is not available.')
       return
     }
@@ -185,9 +214,11 @@ export default Ember.Component.extend({
     changeMode (mode) {
       const id = get(mode, 'id')
 
-      set(this, 'mode', id)
-      this._changeEditorMode(id)
-      this._focusOnEditor()
+      get(this, 'loader').loadMode(id).then(() => {
+        set(this, 'mode', id)
+        this._changeEditorMode(id)
+        this._focusOnEditor()
+      })
     }
   }
 });
