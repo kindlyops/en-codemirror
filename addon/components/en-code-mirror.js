@@ -3,7 +3,6 @@ import Ember from 'ember';
 const {
   get,
   set,
-  inject,
   computed,
   on,
   run,
@@ -22,38 +21,20 @@ const { capitalize } = String
 export default Component.extend({
   classNames: ['en-code-mirror'],
 
-  loader: inject.service('code-mirror-loader'),
-
   modes: Em.A([
-    Em.Object.create({ id: 'javascript', label: 'JavaScript' }),
-    Em.Object.create({ id: 'clike', label: 'Java' }),
-    Em.Object.create({ id: 'clike', label: 'JavaScript' }),
-    Em.Object.create({ id: 'clike', label: 'C' }),
-    Em.Object.create({ id: 'clike', label: 'C++' }),
-    Em.Object.create({ id: 'htmlmixed', label: 'HTML' }),
-    Em.Object.create({ id: 'css', label: 'CSS' }),
-    Em.Object.create({ id: 'php', label: 'PHP' }),
-    Em.Object.create({ id: 'python', label: 'Python' }),
-    Em.Object.create({ id: 'ruby', label: 'Ruby' }),
-    Em.Object.create({ id: 'go', label: 'Go' }),
-    Em.Object.create({ id: 'rust', label: 'Rust' }),
-    Em.Object.create({ id: 'swift', label: 'Swift' }),
-    Em.Object.create({ id: 'sql', label: 'SQL' }),
+    Em.Object.create({ id: 'javascript', mode: 'javascript', label: 'JavaScript' }),
+    Em.Object.create({ id: 'text/x-java', mode: 'clike', label: 'Java' }),
+    Em.Object.create({ id: 'text/csrc', mode: 'clike', label: 'C' }),
+    Em.Object.create({ id: 'text/c++src', mode: 'clike', label: 'C++' }),
+    Em.Object.create({ id: 'html', mode: 'htmlmixed', label: 'HTML' }),
+    Em.Object.create({ id: 'css', mode: 'css', label: 'CSS' }),
+    Em.Object.create({ id: 'php', mode: 'php', label: 'PHP' }),
+    Em.Object.create({ id: 'python', mode: 'python', label: 'Python' }),
+    Em.Object.create({ id: 'ruby', mode: 'ruby', label: 'Ruby' }),
+    Em.Object.create({ id: 'go', mode: 'go', label: 'Go' }),
+    Em.Object.create({ id: 'rust', mode: 'rust', label: 'Rust' }),
+    Em.Object.create({ id: 'swift', mode: 'swift', label: 'Swift' })
   ]),
-
-  /**
-   * @property isLoading
-   * @type {Boolean}
-   * @default false
-   */
-  isLoading: false,
-
-  /**
-   * @property isSimpleMode
-   * @type {Boolean}
-   * @default false
-   */
-  isSimpleMode: false,
 
   /**
    * @property value
@@ -90,8 +71,6 @@ export default Component.extend({
    */
   setup: on('didInsertElement', function () {
     run.scheduleOnce('afterRender', () => {
-      set(this, 'isLoading', true)
-
       this._listenToChanges = this._listenToChanges.bind(this)
       this._focusOnEditor = this._focusOnEditor.bind(this)
 
@@ -100,33 +79,20 @@ export default Component.extend({
         this, 'mode', 'readOnly', 'autoFocus'
       )
 
-      let loader = get(this, 'loader')
+      CodeMirror.modeURL = `https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.2/mode/%N/%N.min.js`
 
-      Promise
-        .all([loader.loadJavascript(), loader.loadCSS()])
-        .then(_ => {
-          set(this, 'isLoading', false)
+      this._codemirror = CodeMirror.fromTextArea(textarea, {
+        readOnly: readOnly,
+        autoFocus: autoFocus,
+        lineNumbers: true
+      })
 
-          this._codemirror = CodeMirror(textarea, {
-            mode: mode,
-            readOnly: readOnly,
-            autoFocus: autoFocus,
-            lineNumbers: true
-          })
+      this._changeEditorMode(mode)
 
-          this._listenToChanges()
-          this._updateEditorValue()
+      this._listenToChanges()
+      this._updateEditorValue()
 
-          if (autoFocus) this._focusOnEditor()
-
-        }).catch(err => {
-          console.error(err)
-
-          setProperties(this, {
-            isLoading: false,
-            isSimpleMode: true
-          })
-        })
+      if (autoFocus) this._focusOnEditor()
     })
   }),
 
@@ -159,11 +125,14 @@ export default Component.extend({
    * @method _changeEditorMode
    */
 
-  _changeEditorMode (mode) {
+  _changeEditorMode (id, mode) {
     const codemirror = this._codemirror
     if (!codemirror) return
 
-    codemirror.setOption("mode", mode)
+    CodeMirror.autoLoadMode(codemirror, mode)
+    codemirror.setOption("mode", id)
+
+    console.info(`[en-code-mirror] Mode now set to ${mode}`)
   },
 
   /**
@@ -219,14 +188,13 @@ export default Component.extend({
   },
 
   actions: {
-    changeMode (mode) {
-      const id = get(mode, 'id')
+    changeMode (option) {
+      const id   = get(option, 'id')
+      const mode = get(option, 'mode')
 
-      get(this, 'loader').loadMode(id).then(() => {
-        set(this, 'mode', id)
-        this._changeEditorMode(id)
-        this._focusOnEditor()
-      })
+      set(this, 'mode', mode)
+      this._changeEditorMode(id, mode)
+      this._focusOnEditor()
     }
   }
 });

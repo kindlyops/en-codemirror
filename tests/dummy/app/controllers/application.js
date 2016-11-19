@@ -8,7 +8,12 @@ const {
 } = Em
 
 export default Em.Controller.extend({
-  value: "some code",
+  value: `
+    function () {
+      updated: computed('value', function () {
+      }),
+    }
+  `,
 
   updated: computed('value', function () {
   }),
