@@ -8,6 +8,7 @@ const {
   on,
   run,
   getProperties,
+  setProperties,
   getWithDefault,
   Logger,
   String,
@@ -21,35 +22,39 @@ const { capitalize } = String
 export default Component.extend({
   classNames: ['en-code-mirror'],
 
-  modes: Em.A([
-    'javascript',
-    'java',
-    'css',
-    'htmlmixed',
-    'python',
-    'ruby',
-    'go',
-  ]),
-
   loader: inject.service('code-mirror-loader'),
 
+  modes: Em.A([
+    Em.Object.create({ id: 'javascript', label: 'JavaScript' }),
+    Em.Object.create({ id: 'clike', label: 'Java' }),
+    Em.Object.create({ id: 'clike', label: 'JavaScript' }),
+    Em.Object.create({ id: 'clike', label: 'C' }),
+    Em.Object.create({ id: 'clike', label: 'C++' }),
+    Em.Object.create({ id: 'htmlmixed', label: 'HTML' }),
+    Em.Object.create({ id: 'css', label: 'CSS' }),
+    Em.Object.create({ id: 'php', label: 'PHP' }),
+    Em.Object.create({ id: 'python', label: 'Python' }),
+    Em.Object.create({ id: 'ruby', label: 'Ruby' }),
+    Em.Object.create({ id: 'go', label: 'Go' }),
+    Em.Object.create({ id: 'rust', label: 'Rust' }),
+    Em.Object.create({ id: 'swift', label: 'Swift' }),
+    Em.Object.create({ id: 'sql', label: 'SQL' }),
+  ]),
 
-  options: computed('modes', function () {
-    const modes = get(this, 'modes')
-    const mapped =  modes.map(mode => {
-      let label = capitalize(mode)
+  /**
+   * @property isLoading
+   * @type {Boolean}
+   * @default false
+   */
+  isLoading: false,
 
-      if (mode === "css") label = "CSS"
-      if (mode === "php") label = "PHP"
-      if (mode === "sql") label = "SQL"
-      if (mode === "htmlmixed") label = "HTML"
+  /**
+   * @property isSimpleMode
+   * @type {Boolean}
+   * @default false
+   */
+  isSimpleMode: false,
 
-      return Em.Object.create({id: mode, label: label})
-    })
-
-    return Em.A(mapped)
-  }),
-  
   /**
    * @property value
    * @type {String}
@@ -85,11 +90,13 @@ export default Component.extend({
    */
   setup: on('didInsertElement', function () {
     run.scheduleOnce('afterRender', () => {
+      set(this, 'isLoading', true)
+
       this._listenToChanges = this._listenToChanges.bind(this)
       this._focusOnEditor = this._focusOnEditor.bind(this)
 
       const textarea = this.$(".en-code-mirror-textarea")[0]
-      const {  mode, readOnly, autoFocus } = getProperties(
+      const { mode, readOnly, autoFocus } = getProperties(
         this, 'mode', 'readOnly', 'autoFocus'
       )
 
@@ -98,6 +105,8 @@ export default Component.extend({
       Promise
         .all([loader.loadJavascript(), loader.loadCSS()])
         .then(_ => {
+          set(this, 'isLoading', false)
+
           this._codemirror = CodeMirror(textarea, {
             mode: mode,
             readOnly: readOnly,
@@ -112,6 +121,11 @@ export default Component.extend({
 
         }).catch(err => {
           console.error(err)
+
+          setProperties(this, {
+            isLoading: false,
+            isSimpleMode: true
+          })
         })
     })
   }),
@@ -172,10 +186,10 @@ export default Component.extend({
   },
 
   _checkModeCompatibility () {
-    const mode = get(this, 'mode')
+    const modeName = get(this, 'mode')
     const modes = get(this, 'modes')
 
-    if (modes.indexOf(mode) === -1) {
+    if (modes.find(mode => get(mode, 'id') === modeName) === -1) {
       warn('[en-code-mirror] The mode you specified is not available.')
       return
     }

@@ -16,8 +16,11 @@ export default Service.extend({
   hasLoadedJS: false,
   loadedModes: [],
 
+  version: '5.20.2',
+
   loadCSS () {
-    let cssURL = 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.2/codemirror.min.css'
+    let version = get(this, 'version')
+    let cssURL = `https://cdnjs.cloudflare.com/ajax/libs/codemirror/${version}/codemirror.min.css`
 
     let css = document.createElement('link')
     css.rel = 'stylesheet'
@@ -29,7 +32,8 @@ export default Service.extend({
   },
 
   loadJavascript () {
-    let url = 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.2/codemirror.min.js'
+    let version = get(this, 'version')
+    let url = `https://cdnjs.cloudflare.com/ajax/libs/codemirror/${version}/codemirror.min.js`
 
     if (get(this, 'hasLoadedJS')) {
       return
@@ -42,16 +46,18 @@ export default Service.extend({
   },
 
   loadMode (mode) {
-    let url = `https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.2/mode/${mode}/${mode}.min.js`
+    let version = get(this, 'version')
+    let url = `https://cdnjs.cloudflare.com/ajax/libs/codemirror/${version}/mode/${mode}/${mode}.min.js`
     let loaded = get(this, 'loadedModes')
 
     if (loaded.indexOf(mode) > -1) return
 
     set(this, 'loadedModes', loaded.concat(mode))
 
+    console.log(mode)
     return ajax({
       url,
       dataType: 'script'
-    }).then(_ => console.log('loaded'))
+    })
   }
 });

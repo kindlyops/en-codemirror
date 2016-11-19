@@ -1,10 +1,21 @@
 {{#unless disableModeSelector}}
-  {{en-select options=options
+  {{en-select options=modes
               label="Select a mode"
               value=mode
               on-select="changeMode"
               class="en-code-mirror-mode-selector"}}
 {{/unless}}
 
-<div class="en-code-mirror-textarea">
-</div>
+{{#if isLoading}}
+  <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+    <path fill="none" class="bk" d="M0 0h100v100H0z"/><circle cx="50" cy="50" r="40" stroke-dasharray="223.83847656827277 74.61282552275759" stroke="#4285f4" fill="none" stroke-width="10"><animateTransform attributeName="transform" type="rotate" values="0 50 50;180 50 50;360 50 50;" keyTimes="0;0.5;1" dur="1s" repeatCount="indefinite" begin="0s"/></circle>
+  </svg>
+{{/if}}
+
+{{#if isSimpleMode}}
+  <textarea class="en-code-mirror-textarea">
+  </textarea>
+{{else}}
+  <div class="en-code-mirror-textarea">
+  </div>
+{{/if}}
