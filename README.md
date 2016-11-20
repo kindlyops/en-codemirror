@@ -1,25 +1,29 @@
-# En-codemirror
+# en-codemirror
 
-This README outlines the details of collaborating on this Ember addon.
+A simple CodeMirror component for ember.js.
 
 ## Installation
 
-* `git clone` this repository
-* `npm install`
-* `bower install`
+`ember install en-codemirror`
 
-## Running
+You can use it like so:
 
-* `ember server`
-* Visit your app at http://localhost:4200.
+```
+  {{en-codemirror
+    value=value
+    onChange=(action (mut value))
+    }}
+```
+When the content is changed, the component sends the `onChange` action with the new value. You can use that however you want.
 
-## Running Tests
+You can also pass a `readOnly` flag that will disable the editor.
 
-* `ember test`
-* `ember test --server`
+## Loading Modes
 
-## Building
+`en-codemirror` loads with the JavaScript mode as default. There's a select input at the top which the user can use to switch to a different mode.
 
-* `ember build`
+This addon does *not* bundle the modes with itself. Instead, it lazy loads modes using CodeMirror's `autoLoadMode` function. This keeps your `vendor.js` file's size down.
 
-For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
+## Contributing
+
+Please report any issues or bugs you find. Feel free to send in PRs too.
