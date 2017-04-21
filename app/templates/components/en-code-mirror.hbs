@@ -2,7 +2,7 @@
   {{en-select options=modes
               label="Select a mode"
               value=mode
-              on-select="changeMode"
+              on-select=(action "changeMode")
               class="en-code-mirror-mode-selector"}}
 {{/unless}}
 
