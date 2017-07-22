@@ -1,10 +1,8 @@
 import Em from 'ember'
 
 const {
-  get: get,
   set: set,
-  computed,
-  on
+  computed
 } = Em
 
 export default Em.Controller.extend({

@@ -1,7 +1,13 @@
+@import 'en-select';
+
 .en-select {
   font-size: 13px;
   max-width: 220px;
   position: absolute;
-  right: 50%;
+  left: 100%;
   top: 0
+}
+
+body {
+  font-family: monospace
 }
